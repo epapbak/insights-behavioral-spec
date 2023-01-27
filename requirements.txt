@@ -1,3 +1,9 @@
 behave
 pytest
 psycopg2
+fastapi
+uvicorn[standard]
+python-multipart
+requests
+minio
+jsonschema
