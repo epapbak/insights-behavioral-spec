@@ -2,7 +2,7 @@ FROM registry.access.redhat.com/ubi8/ubi:latest
 
 ENV VENV=/insights-behavioral-spec-venv \
     HOME=/insights-behavioral-spec \
-    REQUESTS_CA_BUNDLE=/etc/pki/tls/certs/ca-bundle.crt
+    REQUESTS_CA_BUNDLE=/etc/pki/tls/certs/ca-bundle.crt \
     TESTS_TO_EXECUTE=tests
 
 WORKDIR $HOME
