@@ -16,6 +16,8 @@
 
 import subprocess
 from src.process_output import process_generated_output
+from behave import then, when
+from common_aggregator import DB_TABLES
 
 
 @when(u"I run the exporter with the {flag} command line flag")
@@ -55,6 +57,8 @@ Usage of insights-results-aggregator-exporter:
         export rules disabled by more users
   -export-log
         export log
+  -ignore-tables string
+        comma-separated list of tables that will be ignored
   -limit int
         limit number of exported records (default -1)
   -metadata

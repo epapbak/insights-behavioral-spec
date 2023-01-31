@@ -14,12 +14,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# clean up database
-psql postgresql://postgres:postgres@localhost:5432/test?sslmode=disable --file setup/clean_database.sql
-
-export PATH=$PATH:/tmp/ramdisk/
-export NOVENV=1
-
 function prepare_venv() {
     echo "Preparing environment"
     # shellcheck disable=SC1091

@@ -298,7 +298,6 @@ Directory where feature files with scenarios and scenario outlines are stored.
 * Check if cleaner displays version info
 * Check if cleaner displays authors
 * Check if Postgres database is available
-* Check if the test database does not contain tables to be created by tests
 
 ## `insights-results-aggregator-exporter/database_access.feature`
 
