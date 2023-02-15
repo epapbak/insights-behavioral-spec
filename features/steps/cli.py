@@ -64,7 +64,7 @@ def check_version_info(context, service):
     elif service == "ccx-notification-writer":
         from steps.notification_writer import check_version_from_ccx_notification_writer
 
-        check_version_from_ccx_notification_service(context)
+        check_version_from_ccx_notification_writer(context)
     elif service == "cleaner":
         from steps.cleaner_main import check_version_from_cleaner
 

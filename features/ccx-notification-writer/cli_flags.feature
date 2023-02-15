@@ -1,3 +1,4 @@
+@notification_writer
 Feature: Check command line options provided by CCX Notification Writer
 
 
@@ -20,30 +21,48 @@ Feature: Check command line options provided by CCX Notification Writer
 
 
   Scenario: Check the ability to initialize migration info table
-    Given Postgres is running
-      And CCX Notification Writer database is created for user postgres with password postgres
+    Given the system is in default state
+      And the database is named notification
+      And database user is set to postgres
+      And database password is set to postgres
+      And database connection is established
       And CCX Notification Writer database is not set up
      When I start the CCX Notification Writer with the --db-init-migration command line flag
      Then the process should exit with status code set to 0
+    # TODO: Add step for checking the created tables
 
 
   Scenario: Check the ability to initialize all database tables
-    Given Postgres is running
-      And CCX Notification Writer database is created for user postgres with password postgres
+    Given the system is in default state
+      And the database is named notification
+      And database user is set to postgres
+      And database password is set to postgres
+      And database connection is established
       And CCX Notification Writer database is not set up
      When I start the CCX Notification Writer with the --db-init command line flag
      Then the process should exit with status code set to 0
+    # TODO: Add step for checking the created tables
 
 
   Scenario: Check the ability to perform database cleanup
-    Given Postgres is running
-      And CCX Notification Writer database is created for user postgres with password postgres
+    Given the system is in default state
+      And the database is named notification
+      And database user is set to postgres
+      And database password is set to postgres
+      And database connection is established
+      And CCX Notification database is empty
      When I start the CCX Notification Writer with the --db-cleanup command line flag
      Then the process should exit with status code set to 0
 
 
   Scenario: Check the ability to drop all database tables
-    Given Postgres is running
-      And CCX Notification Writer database is created for user postgres with password postgres
+    Given the system is in default state
+      And the database is named notification
+      And database user is set to postgres
+      And database password is set to postgres
+      And database connection is established
+      And CCX Notification database is empty
      When I start the CCX Notification Writer with the --db-drop-tables command line flag
      Then the process should exit with status code set to 0
+      And the database is empty
+    # TODO: Add step for checking the created tables

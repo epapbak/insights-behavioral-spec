@@ -466,7 +466,7 @@ Directory where feature files with scenarios and scenario outlines are stored.
 ## `ccx-notification-service/smoketests.feature`
 
 * Check if CCX Notification Service application is available
-* Check if Kafkacat utility is available
+* Check if kcat utility is available
 * Check if jps utility is available
 * Check if Postgres database is available
 * Check if CCX Notification database can be reached
@@ -524,7 +524,7 @@ Directory where feature files with scenarios and scenario outlines are stored.
 ## `ccx-notification-writer/smoketests.feature`
 
 * Check if CCX Notification Writer application is available
-* Check if Kafkacat utility is available
+* Check if kcat utility is available
 * Check if jps utility is available
 * Check if Postgres database is available
 * Check if CCX Notification Writer database can be reached

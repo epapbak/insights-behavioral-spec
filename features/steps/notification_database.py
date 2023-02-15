@@ -14,50 +14,59 @@
 
 """Database-related operations performed by BDD tests."""
 
+
+DB_TABLES = (
+    "event_targets",
+    "migration_info",
+    "new_reports",
+    "notification_types",
+    "read_errors",
+    "reported",
+    "states",
+)
+
 import subprocess
 import psycopg2
 from psycopg2.errors import UndefinedTable
 from datetime import datetime, timedelta
-
-
 from behave import given, when, then, step
+
+
+class TableExistsException(Exception):
+    def __init__(self, table):
+        super().__init__(f"Table {table} exists")
+        self.table = table
 
 
 @step("CCX Notification database is created for user {user} with password {password}")
 def database_is_created(context, user, password):
-    """Perform connection to CCX Notification database to check its ability."""
+    """Perform connection to CCX Notification database to check its availability."""
     from steps.common_db import connect_to_database
 
     connect_to_database(context, "notification", user, password)
 
 
-@given(u"CXX Notification Writer database contains all required tables")
-def database_contains_all_tables(context):
-    """Check if CCX Notification Writer database contains all required tables."""
-    # TODO: implement this step
-    raise NotImplementedError(
-        u"STEP: Given CXX Notification Writer database contains all tables"
+@given("CCX Notification database is migrated to version {version}")
+def database_is_migrated(context, version):
+    """Migrate the CCX Notification database to given version."""
+    out = subprocess.Popen(
+        ["ccx-notification-writer", "--migrate", version],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
     )
+    assert out is not None
+    out.communicate()
+    out.wait()
 
 
 @given("CCX Notification Service database is set up")
-def ensure_database_is_set_up(context):
+def database_contains_all_tables(context):
     """Check that the tables exist in the DB."""
-    # at least following tables should exist
-    tables = (
-        "migration_info",
-        "new_reports",
-        "notification_types",
-        "reported",
-        "states",
-        "event_targets",
-    )
-
     cursor = context.connection.cursor()
-    for table in tables:
+    for table in DB_TABLES:
         try:
             cursor.execute("SELECT 1 from {}".format(table))
-            v = cursor.fetchone()
+            _ = cursor.fetchone()
             context.connection.commit()
         except UndefinedTable as e:
             context.connection.rollback()
@@ -65,44 +74,25 @@ def ensure_database_is_set_up(context):
     pass
 
 
-@given("CCX Notification database is empty")
-def notification_db_empty(context):
-    """Ensure that the CCX Notification database has no reports, but has all tables."""
-    # We actually only want `new_reports` and `reported` table to be empty, so let's clean up
-    cursor = context.connection.cursor()
-    try:
-        cursor.execute("TRUNCATE TABLE new_reports")
-        cursor.execute("TRUNCATE TABLE reported")
-        context.connection.commit()
-    except Exception as e:
-        context.connection.rollback()
-        raise e
-
-
 @given(u"CCX Notification Writer database is not set up")
 def ensure_database_emptiness(context):
     """Check that the tables do not exist in the DB."""
-    # at least following tables should not exists
-    tables = (
-        "report",
-        "cluster_rule_toggle",
-        "cluster_rule_user_feedback",
-        "cluster_user_rule_disable_feedback",
-        "rule_hit",
-    )
-
     cursor = context.connection.cursor()
-    for table in tables:
+    for table in DB_TABLES:
         try:
             cursor.execute("SELECT 1 from {}".format(table))
-            v = cursor.fetchone()
+            _ = cursor.fetchone()
             context.connection.commit()
-            raise Exception("Table '{}' exists".format(table))
-        except UndefinedTable as e:
+            raise TableExistsException(table)
+        except UndefinedTable:
             # exception means that the table does not exists
             # which is expected behaviour
             context.connection.rollback()
-            pass
+            continue
+        except TableExistsException as e:
+            print(e)
+            cursor.execute(f"DROP TABLE IF EXISTS {e.table} CASCADE")
+            context.connection.commit()
 
 
 @when(u"I select all rows from table {table}")

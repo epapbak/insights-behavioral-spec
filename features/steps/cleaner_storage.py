@@ -85,6 +85,7 @@ def establish_connection_to_database(context):
 @then(u"I should find that the database is empty")
 def ensure_database_emptiness(context):
     """Perform check if the database is empty."""
+    #TODO: Unify. It is common with notification service
     cursor = context.connection.cursor()
     for table in DB_TABLES:
         try:

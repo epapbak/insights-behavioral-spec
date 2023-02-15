@@ -27,7 +27,8 @@ WORKDIR $HOME
 COPY . $HOME
 
 ENV PATH="$VENV/bin:$PATH"
-RUN dnf copr enable -y bvn13/kcat epel-9-x86_64 && dnf update -y && dnf install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm && rpm --import https://packages.confluent.io/rpm/7.3/archive.key && dnf update -y &&  echo -e '[Confluent]\nname=Confluent repository\nbaseurl=https://packages.confluent.io/rpm/7.3\ngpgcheck=1\ngpgkey=https://packages.confluent.io/rpm/7.3/archive.key\nenabled=1\n\n[Confluent-Clients]\nname=Confluent Clients repository\nbaseurl=https://packages.confluent.io/clients/rpm/centos/$releasever/$basearch\ngpgcheck=1\ngpgkey=https://packages.confluent.io/clients/rpm/archive.key\nenabled=1' > /etc/yum.repos.d/confluent.repo && dnf update -y && dnf install -y kafkacat
+
+
 RUN dnf install --nodocs -y python3-pip unzip make && \
     python3 -m venv $VENV && \
     curl -ksL https://password.corp.redhat.com/RH-IT-Root-CA.crt \
@@ -38,6 +39,8 @@ RUN dnf install --nodocs -y python3-pip unzip make && \
     dnf clean all && \
     chmod -R g=u $HOME $VENV /etc/passwd && \
     chgrp -R 0 $HOME $VENV
+
+COPY --from=confluentinc/cp-kafkacat:7.1.5-1-ubi8 /usr/local/bin/kafkacat $VENV_BIN/kcat
 
 USER 1001
 
