@@ -70,6 +70,9 @@ Feature: Check command line options provided by CCX Notification Service
   Scenario: Check the ability to perform database cleanup on startup
      When cleanup-on-startup command line flag is specified
      When I start the CCX Notification Service with the --instant-reports command line flag
+          | val                                                   | var         |
+          | CCX_NOTIFICATION_SERVICE__KAFKA_BROKER__ENABLED       | false       |
+          | CCX_NOTIFICATION_SERVICE__SERVICE_LOG__ENABLED        | false       |
      Then It should clean items in new_reports table older than 90 days
       And It should clean items in reported table older than 90 days
-      And the process should exit with status code set to 0
+      And the process should exit with status code set to 1

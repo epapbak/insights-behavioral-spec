@@ -7,6 +7,8 @@ enabled = true
 addresses = ["kafka:9092"]
 topic = "platform.notifications.ingress"
 timeout = "60s"
+
+[notification_events]
 likelihood_threshold = 0
 impact_threshold = 0
 severity_threshold = 0
