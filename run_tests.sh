@@ -1,18 +1,28 @@
 #!/bin/bash -x
 
+function install_reqs() {
+    pip install -r requirements.txt || exit 1
+}
+
+function install_extra_reqs() {
+    if [ -d "requirements" ]; then
+        for f in requirements/*.txt; do
+            echo "Installing extra requirements from $f" && pip install -r "$f" || exit 1
+        done
+    fi
+}
+
 function prepare_venv() {
     # shellcheck disable=SC1091
     virtualenv -p python3 venv && source venv/bin/activate
-    pip install -r requirements.txt
-    for f in requirements/*.txt; do
-        echo "File -> $f" && pip install -r "$f" || exit 1
-    done
+    install_reqs
+    install_extra_reqs
 }
 
 # prepare virtual environment if necessary
 [ "$VIRTUAL_ENV" != "" ] || NOVENV=1
 case "$NOVENV" in
-    "") echo "using existing virtual env";;
+    "") echo "using existing virtual env" && install_reqs && install_extra_reqs;;
     "1") prepare_venv;;
 esac
 
